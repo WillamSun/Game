@@ -1,23 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Microsoft.Win32;
+﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Numerics;
 
 namespace Game
 {
     public partial class Form2 : Form
     {
-        Random ran = new Random();
-        bool WillBSOD = true;
+        Random ran = new();
         int first;
         int second;
         decimal times;
@@ -31,19 +19,8 @@ namespace Game
         {
             InitializeComponent();
         }
-        public static double NextDouble(double miniDouble, double maxiDouble)
-        {
-            Random random = new Random();
-            if (random != null)
-            {
-                return random.NextDouble() * (maxiDouble - miniDouble) + miniDouble;
-            }
-            else
-            {
-                return 0.0d;
-            }
-        }
-        void questing()
+
+        private void Questing()
         {
             timer1.Start();
             first = ran.Next((int)Math.Pow(10.0, question), (int)Math.Pow(10.0, question + 1));
@@ -90,7 +67,7 @@ namespace Game
                         if (ran.Next(0, 2) == 0)
                         {
                             mode = 0;
-                            questing();
+                            Questing();
                         }
                         else
                         {
@@ -127,7 +104,7 @@ namespace Game
                         time += 5;
                         if (ran.Next(0, 2) == 0)
                         {
-                            questing();
+                            Questing();
                             mode = 0;
                         }
                         else
@@ -147,7 +124,7 @@ namespace Game
                 time += 5;
                 if (ran.Next(0, 2) == 0)
                 {
-                    questing();
+                    Questing();
                     mode = 0;
                 }
                 else
@@ -166,7 +143,7 @@ namespace Game
                 time += 5;
                 if (ran.Next(0, 2) == 0)
                 {
-                    questing();
+                    Questing();
                     mode = 0;
                 }
                 else
@@ -175,25 +152,19 @@ namespace Game
                     mode = 1;
                 }
             }
-            else if (button1.Text == "BSOD")
-            {
-                Run("BSOD", Application.ExecutablePath);
-            }
+            else if (button1.Text == "BSOD") Run("BSOD", Application.ExecutablePath);
         }
         private void Form2_Load(object sender, EventArgs e)
         {
             StartPosition = FormStartPosition.Manual;
             int w = SystemInformation.WorkingArea.Width;
             int h = SystemInformation.WorkingArea.Height;
-            Location = new Point(w / 2 - this.Width / 2, h / 2 - this.Height / 2);
+            Location = new Point(w / 2 - Width / 2, h / 2 - Height / 2);
             timer1.Stop();
-            for (int i = 1; i < 8; i++)
-            {
-                Run("StartWatchDog " + i.ToString(), Application.ExecutablePath);
-            }
+            for (int i = 1; i < 8; i++) Run("StartWatchDog " + i.ToString(), Application.ExecutablePath);
             if (ran.Next(0, 2) == 0)
             {
-                questing();
+                Questing();
                 mode = 0;
             }
             else
@@ -211,25 +182,19 @@ namespace Game
             TaskKill("explorer");
             timer1.Start();
         }
-        private void keypressed(Object o, KeyPressEventArgs e)
+        private void keypressed(object o, KeyPressEventArgs e)
         {
             textBox1.ScrollToCaret();
             if (e.KeyChar != '\b')
             {
-                if ((e.KeyChar < '0' && e.KeyChar != '-') || e.KeyChar > '9')
-                {
-                    e.Handled = true;
-                }
-                else if (textBox1.Text.Contains("-") && e.KeyChar == '-')
-                {
-                    e.Handled = true;
-                }
-                else if (!textBox1.Text.Contains("-") && e.KeyChar == '-')
+                if ((e.KeyChar < '0' && e.KeyChar != '-') || e.KeyChar > '9') e.Handled = true;
+                else if (textBox1.Text.Contains('-') && e.KeyChar == '-') e.Handled = true;
+                else if (!textBox1.Text.Contains('-') && e.KeyChar == '-')
                 {
                     e.Handled = true;
                     textBox1.Text = "-" + textBox1.Text;
                 }
-                if (!textBox1.Text.StartsWith("-") && textBox1.Text.Contains("-"))
+                if (!textBox1.Text.StartsWith("-") && textBox1.Text.Contains('-'))
                 {
                     textBox1.Text = textBox1.Text.Replace("-", string.Empty);
                     textBox1.Text = "-" + textBox1.Text;
@@ -247,7 +212,7 @@ namespace Game
                 button1_Click(sender, e);
             }
         }
-        private void Form2_FormClosing(Object sender, FormClosingEventArgs e)
+        private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (!BSODing)
             {
@@ -255,35 +220,26 @@ namespace Game
                 BSOD();
             }
         }
-        void TaskKill(string ProcessName)
+
+        static void TaskKill(string ProcessName)
         {
             foreach (Process p in Process.GetProcesses())//GetProcessesByName(strProcessesByName))
             {
                 if (p.ProcessName == ProcessName)
                 {
-                    try
-                    {
-                        p.Kill();
-                        // possibly with a timeout
-                    }
-                    catch (Win32Exception)
-                    {
-                        Run("-F -IM " + ProcessName, "taskkill.exe");
-                        // process was terminating or can't be terminated - deal with it
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        // process has already exited - might be able to let this one go
-                    }
+                    try { p.Kill(); }
+                    catch (Win32Exception) { Run("-F -IM " + ProcessName, "taskkill.exe"); }
+                    catch (InvalidOperationException) { }
                 }
             }
 
         }
-        bool Run(string Command, string Exec)
+
+        static bool Run(string Command, string Exec)
         {
             try
             {
-                Process p = new Process();
+                Process p = new();
                 p.StartInfo.FileName = Exec;
                 p.StartInfo.Arguments = Command;
                 p.StartInfo.UseShellExecute = false;
@@ -301,26 +257,16 @@ namespace Game
             BSODing = true;
             button1.Text = "BSOD";
             button1.Cursor = Cursors.Default;
-            textBox1.Enabled = false;
             timer1.Stop();
-            button4.Enabled = false;
-            progressBar1.Enabled = false;
-            label2.Enabled = false;
-            label3.Enabled = false;
+            textBox1.Enabled = button4.Enabled = progressBar1.Enabled = label2.Enabled = label3.Enabled = false;
             Cursor = Cursors.No;
-            if (WillBSOD)
-            {
-                Run("BSOD", Application.ExecutablePath);
-            }
+            if (stopBSODToolStripMenuItem.Checked) Run("BSOD", Application.ExecutablePath);
         }
 
         private void BSODNowToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             timer1.Enabled = false;
-            if (MessageBox.Show("Continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-            {
-                BSOD();
-            }
+            if (MessageBox.Show("Continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes) BSOD();
             timer1.Enabled = true;
         }
 
@@ -332,47 +278,19 @@ namespace Game
 
         private void StopProcessesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            for (int i = 1; i < 8; i++)
-            {
-                TaskKill(Process.GetCurrentProcess().ProcessName);
-            }
+            for (int i = 1; i < 8; i++) TaskKill(Process.GetCurrentProcess().ProcessName);
             Environment.Exit(0);
         }
-
-        private void stopBSODToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (WillBSOD)
-            {
-                WillBSOD = false;
-            }
-            else
-            {
-                WillBSOD = true;
-            }
-        }
-
+        
         private void fillInTheBlankToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (mode == 0)
-            {
-                textBox1.Text = (first + second).ToString();
-            }
-            else if(mode == 1)
-            {
-                textBox1.Text = (first - second).ToString();
-            }
+            if (mode == 0) textBox1.Text = (first + second).ToString();
+            else if(mode == 1) textBox1.Text = (first - second).ToString();
         }
 
         private void useMessageBoxToShowToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (mode == 0)
-            {
-                MessageBox.Show((first + second).ToString());
-            }
-            else if (mode == 1)
-            {
-                MessageBox.Show((first - second).ToString());
-            }
+            MessageBox.Show((mode == 0 ? (first + second) : (first - second)).ToString());
         }
 
         private void goToNextQuestionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -387,14 +305,7 @@ namespace Game
 
         private void stopToolStripMenuItem_Click(object sender, EventArgs e) 
         {
-            if (timer1.Enabled)
-            {
-                timer1.Enabled = false;
-            }
-            else
-            {
-                timer1.Enabled = true;
-            }
+            timer1.Enabled ^= true;
         }
 
         private void resetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -418,37 +329,14 @@ namespace Game
                     label7.Visible = false;
                     stopToolStripMenuItem.Checked = false;
                 }
-                if (WillBSOD)
-                {
-                    stopBSODToolStripMenuItem.Checked = false;
-                }
-                else
-                {
-                    stopBSODToolStripMenuItem.Checked = true;
-                }
-                if (textBox1.Text.Contains("-") && !textBox1.Text.StartsWith("-"))
-                {
-                    textBox1.Text = "-" + textBox1.Text.Replace("-","");
-                }
+                if (stopBSODToolStripMenuItem.Checked) stopBSODToolStripMenuItem.Checked = false;
+                else stopBSODToolStripMenuItem.Checked = true;
+                if (textBox1.Text.Contains('-') && !textBox1.Text.StartsWith("-")) textBox1.Text = "-" + textBox1.Text.Replace("-", "");
                 label3.Text = "Already pass " + (times / 100) + "s";
                 progressBar1.Value = (int)(100 / time * (times / 100));
                 label2.Text = "Lose after " + (time - (times / 100)).ToString() + "s";
-                if (label4.Visible)
-                {
-                    new Thread(() => { Thread.Sleep(2000); label4.Visible = false; }).Start();
-                }
-                if (label6.Visible)
-                {
-                    new Thread(() => { Thread.Sleep(2000); label6.Visible = false; }).Start();
-                }
-                if (WillBSOD)
-                {
-                    stopBSODToolStripMenuItem.Text = "Stop all BSOD";
-                }
-                else
-                {
-                    stopBSODToolStripMenuItem.Text = "Cancel Stop all BSOD";
-                }
+                if (label4.Visible) new Thread(() => { Thread.Sleep(2000); label4.Visible = false; }).Start();
+                if (label6.Visible) new Thread(() => { Thread.Sleep(2000); label6.Visible = false; }).Start();
                 Process[] myproc = Process.GetProcesses();
                 foreach (Process item in myproc)
                 {
@@ -458,15 +346,9 @@ namespace Game
                         new Thread(() => MessageBox.Show("Why did you open the calculator?\nBSOD incoming!", "loser!!")).Start();
                         BSOD();
                     }
-                    else if (item.ProcessName == "explorer")
-                    {
-                        if (!restartExplorer)
-                        {
-                            item.Kill();
-                        }
-                    }
+                    else if (item.ProcessName == "explorer") if (!restartExplorer) item.Kill();
                 }
-                this.Text = "Question" + (question + 1).ToString();
+                Text = "Question" + (question + 1).ToString();
             }
         }
 

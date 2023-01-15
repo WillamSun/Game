@@ -153,7 +153,7 @@
             this.StopProcessToolStripMenuItem,
             this.jumpToTheNextQuestionToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(273, 52);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(273, 80);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // StopProcessToolStripMenuItem
@@ -186,10 +186,10 @@
             // 
             // stopBSODToolStripMenuItem
             // 
+            this.stopBSODToolStripMenuItem.CheckOnClick = true;
             this.stopBSODToolStripMenuItem.Name = "stopBSODToolStripMenuItem";
             this.stopBSODToolStripMenuItem.Size = new System.Drawing.Size(237, 26);
-            this.stopBSODToolStripMenuItem.Text = "Stop all BSOD";
-            this.stopBSODToolStripMenuItem.Click += new System.EventHandler(this.stopBSODToolStripMenuItem_Click);
+            this.stopBSODToolStripMenuItem.Text = "Do not BSOD";
             // 
             // showAnswerToolStripMenuItem1
             // 
