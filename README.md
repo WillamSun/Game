@@ -3,7 +3,7 @@ A normal game, but losing may cause BSoD
 The game rules are extremely easy:
 
 Things you do  
-- The only thing you need to do is calculate the answer to the math puzzle and fill it in the text box.
+- The only thing you need to do is calculate the answer of the math puzzles and fill it in the text box.
 - Math puzzles in the game only include additions and subtractions.
 
 Things you can't do  
